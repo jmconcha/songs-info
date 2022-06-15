@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
-import { dispatch, getState, subscribe, unsubscribe } from "./store";
 import SongList from "./SongList";
 import SongDetail from "./SongDetail";
+import { addSong } from '../actions';
 
-function App() {
+function App({ addSong }) {
   const [textInputs, setTextInputs] = useState({
     title: "",
     duration: "",
   });
-  const [songs, setSongs] = useState();
-  const [selectedSong, setSelectedSong] = useState(null);
-
-  const handleSongSelect = (index) =>
-    setSelectedSong(songs.find((song) => song.id === index));
 
   const handleInputChange = (e) => {
     setTextInputs((prevState) => ({
@@ -24,28 +20,17 @@ function App() {
   };
 
   const handleSongAdd = () => {
-    dispatch({
-      type: 'ADD_SONG',
-      payload: {
-        id: uuidv4(),
-        title: textInputs.title,
-        duration: Number(textInputs.duration),
-      },
+    addSong({
+      id: uuidv4(),
+      title: textInputs.title,
+      duration: Number(textInputs.duration),
     });
 
-    setTextInputs({ title: '', duration: '', });
-  };
-
-  useEffect(() => {
-    const handleSongsChange = () => {
-      const { songs } = getState();
-      setSongs(songs);
-    };
-
-    const unsubscribe = subscribe(handleSongsChange);
-
-    return unsubscribe;
-  }, []);
+    setTextInputs({
+      title: '',
+      duration: '',
+    });
+  }
 
   return (
     <div>
@@ -53,6 +38,7 @@ function App() {
         <input
           type="text"
           name="title"
+          value={textInputs.title}
           onChange={handleInputChange}
           style={{
             marginRight: "8px",
@@ -61,6 +47,7 @@ function App() {
         <input
           type="text"
           name="duration"
+          value={textInputs.duration}
           onChange={handleInputChange}
           style={{
             marginRight: "8px",
@@ -73,11 +60,15 @@ function App() {
           display: "flex",
         }}
       >
-        {songs && <SongList songs={songs} onClick={handleSongSelect} />}
-        {selectedSong && <SongDetail song={selectedSong} />}
+        <SongList />
+        <SongDetail />
       </div>
     </div>
   );
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  addSong: payload => dispatch(addSong(payload)),
+});
+
+export default connect(null, mapDispatchToProps)(App);
