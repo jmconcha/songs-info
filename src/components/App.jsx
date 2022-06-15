@@ -67,8 +67,4 @@ function App({ addSong }) {
   );
 }
 
-const mapDispatchToProps = dispatch => ({
-  addSong: payload => dispatch(addSong(payload)),
-});
-
-export default connect(null, mapDispatchToProps)(App);
+export default connect(null, { addSong })(App);

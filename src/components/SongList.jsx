@@ -26,11 +26,8 @@ function SongList({ songs, selectSong }) {
 const mapStateToProps = state => ({
   songs: state.songs,
 });
-const mapDispatchToProps = dispatch => ({
-  selectSong: song => dispatch(selectSong(song)),
-});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  { selectSong },
 )(SongList);
